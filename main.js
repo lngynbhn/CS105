@@ -83,9 +83,10 @@ const settings = {
     },
 
     animation: {
-        play: false,
-        type: 'go up and down',
-        speed: 0.001
+        go_type: 'None',
+        rotate_type: 'None',
+        scale: false,
+        color_change: false,
     }
 }
 
@@ -212,41 +213,70 @@ function resetTransformation() {
 function animate() {
     requestAnimationFrame(animate)
 
-    if (settings.animation.play) {
-        switch (settings.animation.type) {
-            case 'go up and down':
-                mesh.position.y = Math.sin(performance.now() * 0.001) * 0.5
+    if (settings.animation.go_type !== 'None') {
+        switch (settings.animation.go_type) {
+            case 'Lên xuống':
+                mesh.position.y = Math.sin(performance.now() * 0.001) * 1
                 break
-            case 'go left and right':
-                mesh.position.x = Math.sin(performance.now() * 0.001) * 0.5
+            case 'Qua lại':
+                mesh.position.x = Math.sin(performance.now() * 0.001) * 1
                 break
-            case 'go forward and backward':
-                mesh.position.z = Math.sin(performance.now() * 0.001) * 0.5
+            case 'Tiến lùi':
+                mesh.position.z = Math.sin(performance.now() * 0.001) * 1
                 break
-            case 'rotate y':
-                mesh.rotation.y = performance.now() * 0.001
-                break
-            case 'rotate x':
-                mesh.rotation.x = performance.now() * 0.001
-                break
-            case 'rotate z':
-                mesh.rotation.z = performance.now() * 0.001
-                break
-            case 'go around counterclockwise':
-                mesh.position.x = Math.sin(performance.now() * 0.001) * 0.5
-                mesh.position.z = Math.cos(performance.now() * 0.001) * 0.5
-                break
-            case 'go around clockwise':
-                mesh.position.x = Math.cos(performance.now() * 0.001) * 0.5
-                mesh.position.z = Math.sin(performance.now() * 0.001) * 0.5
+            case 'Vòng quanh':
+                mesh.position.x = Math.sin(performance.now() * 0.001) * 1
+                mesh.position.z = Math.cos(performance.now() * 0.001) * 1
                 break
             default:
                 break
-        }
+    }}
+
+    if (settings.animation.rotate_type !== 'None') {
+        switch (settings.animation.rotate_type) {
+            case 'Lên xuống':
+                mesh.position.y = Math.sin(performance.now() * 0.001) * 1
+                break
+            case 'Qua lại':
+                mesh.position.x = Math.sin(performance.now() * 0.001) * 1
+                break
+            case 'Tiến lùi':
+                mesh.position.z = Math.sin(performance.now() * 0.001) * 1
+                break
+            case 'Vòng quanh':
+                mesh.position.x = Math.sin(performance.now() * 0.001) * 1
+                mesh.position.z = Math.cos(performance.now() * 0.001) * 1
+                break
+            case 'Xoay theo X':
+                mesh.rotation.x = performance.now() * 0.0015
+                break
+            case 'Xoay theo Y':
+                mesh.rotation.y = performance.now() * 0.0015
+                break
+            case 'Xoay theo Z':
+                mesh.rotation.z = performance.now() * 0.0015
+                break
+            default:
+                break
+    }}
+
+    if (settings.animation.scale) {
+        mesh.scale.set(
+            Math.sin(performance.now() * 0.001) + 1,
+            Math.sin(performance.now() * 0.001) + 1,
+            Math.sin(performance.now() * 0.001) + 1
+        );
+    }
+
+    if (settings.animation.color_change) {
+        mesh.material.color.setRGB(
+            Math.sin(performance.now() * 0.001),
+            Math.cos(performance.now() * 0.001),
+            Math.sin(performance.now() * 0.001)
+        );
     }
 
     stats.update()
-    // helper.update()
     renderer.render(scene, camera)
 }
 
@@ -650,17 +680,24 @@ function initGUI() {
     // animation
     let animation_gui = gui.addFolder('Animation')
     
-    animation_gui.add(settings.animation, 'play', false).name('Play')
+    animation_gui.add(settings.animation, 'go_type', 
+        [   'None',
+            'Lên xuống', 
+            'Qua lại', 
+            'Tiến lùi', 
+            'Vòng quanh', 
+        ]).name('Di chuyển')
 
-    animation_gui.add(settings.animation, 'type', 
-        [
-            'go up and down', 
-            'go left and right', 
-            'go forward and backward', 
-            'rotate x', 
-            'rotate y', 
-            'rotate z', 
-            'go around clockwise', 
-            'go around counterclockwise'
-        ]).name('Kiểu chuyển động')
+    animation_gui.add(settings.animation, 'rotate_type', 
+        [   'None',
+            'Xoay theo X', 
+            'Xoay theo Y', 
+            'Xoay theo Z', 
+        ]).name('Xoay')
+
+    animation_gui.add(settings.animation, 'scale', false).name('Thu phóng')
+    
+    animation_gui.add(settings.animation, 'color_change', false).name('Đổi màu')
+
+
 }
